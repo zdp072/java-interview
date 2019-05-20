@@ -41,11 +41,11 @@ HashMap初始容量为16，当有数据要插入时，都会检查容量有没�
 ## ConcurentHashMap
 首先将数据分成一段一段的存储（Segment数组），然后给每一段数据（hashMap）配一把锁，当一个线程占用锁访问其中一个段数据的时候，其他段的数据也能被其他线程访问。
 
-ConcurrentHashMap采用分段锁技术，不会像HashTable一样，不管是put还是get才做都需要做同步处理。它会对数据分段加锁，多线程访问不同段的数据的时候不会发生锁冲突导致的阻塞现象。
+ConcurrentHashMap默认将hash表分为16个桶，诸如get、put、remove等常用操作只锁住当前需要用到的桶。这样，原来只能一个线程进入，现在却能同时有16个写线程执行，并发性能的提升是显而易见的。
 
 ## HashSet
 
-HashSet是一个不允许存储重复元素的集合，它几乎全部借助于HashMap来实现，所以HashMap会出现的问题，HashSet也无法避免。
+HashSet是一个不允许存储重复元素的集合，它几乎全部借助于HashMap来实现，只使用HashMap的key来实现各种特性，所以HashMap会出现的问题，HashSet也无法避免。
 
 ## LinkedHashMap
 
