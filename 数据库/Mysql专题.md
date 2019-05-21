@@ -14,6 +14,9 @@
 #### Durability持久性
 事务一旦提交，其结果将保存到数据库中
 
+## Mysql如何做到原子性
+
+
 ## Mysql事务的隔离级别
 #### Read-Uncommitted
 事务未提交就可被其他事务读取
