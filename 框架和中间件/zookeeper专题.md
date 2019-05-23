@@ -17,3 +17,23 @@ zookeeper可以作为很多系统的配置信息管理，比如kafka、storm、d
 ### HA高可用性
 
 hadoop、hdfs、yarn等很多大数据系统，选择基于zookeeper来开发HA高可用机制，就是一个重要进程一般会做主备两个，主进程挂了立马通过zookeeper感知到，并切换到备用进程。
+
+## zookeeper是如何选举的
+
+选举遵循以下原则:
+
+#### 选举投票必须在同一轮次中进行
+如果follower服务选举轮次不同，不会采纳投票。
+
+#### 数据最新的节点优先称为leader
+数据的新旧使用事务id判定，事务id越大认为节点数据越接近leader的数据，自然应该称为leader。
+
+#### server.id值越大的优先称为leader
+如果每个参与竞选节点事务id一样，再使用server.id做比较。server.id是节点在集群中唯一的id，在myid文件中配置。
+
+## zookeeper分布式锁是如何实现的
+重点：zookeeper的分布式锁有两类，一类是保持独占，一类是控制时序。
+
+对于第一类，我们将zookeeper上的一个znode看作是一把锁，通过createznode的方式来实现。所有客户端都去创建/distribute_lock节点，最终成功创建的那个客户端也即拥有了这把锁。用完删除掉自己创建的distribute_lock节点就释放出锁。
+
+对于第二类，/distribute_lock已经预先存在，所有客户端在它下面创建临时顺序编号目录节点，和选master一样，编号最小的获得锁，用完删除。
