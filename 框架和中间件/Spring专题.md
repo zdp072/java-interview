@@ -29,17 +29,16 @@ CGLIB字节码生成技术，其实就是继承被代理类，然后重写被代
 [http://www.cnblogs.com/songanwei/p/9417343.html](http://www.cnblogs.com/songanwei/p/9417343.html)
 
 
-## spring bean的生命周期
-(创建 -> 初始化 -> 销毁)
-1. 实例化bean对象(通过构造方法或者工厂方法)
-2. 设置对象属性(setter等)（依赖注入）
-3. 如果Bean实现了BeanNameAware接口，工厂调用Bean的setBeanName()方法传递Bean的ID。
-4. 如果Bean实现了BeanFactoryAware接口，工厂调用setBeanFactory()方法传入工厂自身
-5. 将Bean实例传递给Bean的前置处理器的postProcessBeforeInitialization(Object bean, String beanname)方法
-6. 调用Bean的初始化方法
-7. 将Bean实例传递给Bean的后置处理器的postProcessAfterInitialization(Object bean, String beanname)方法
-8. 使用Bean
-9. 容器关闭之前，调用Bean的销毁方法
+## spring bean如何进行初始化
+
+1. 激活Aware方法（以编程方式调用spring容器，通过实现这些接口，可以增强spring bean的功能）
+2. 后置处理器（初始化之前调用，添加自己的逻辑处理，以对spring扩展和增强）
+3. 激活自定义的init方法
+4. 后置处理器（初始化之后调用，添加自己的逻辑处理，以对spring扩展和增强[]()）
+
 
 bean的前置、后置处理器，是为了对bean的一个增强
 https://blog.csdn.net/w_linux/article/details/80086950
+
+## Spring只读事务是啥
+只读事务使用readonly进行声明，配置了readonly后，会做一些优化，例如不会开启事务，也就不会有undolog。
