@@ -50,7 +50,12 @@ public boolean equals(Object obj) {
 子类可以通过重写equals方法而实现不同的功能。
 String因为重写了equals方法，从比较引用地址变成了比较引用内容。
 
-## 什么是java的反射机制
+## 什么是java的反射机制？
 运行时动态获取信息以及动态调用对象的方法的这样一种功能叫反射
 用途: springIoC底层实现
 
+## 创建对象的方式有哪些？
+1. 使用new关键字
+2. 使用Class类的newInstance方法
+3. 使用clone方法，不会调用构造函数，需要实现Cloneable接口
+4. 使用反序列化，不会调用构造函数，需要实现Serializable接口
