@@ -4,6 +4,11 @@
 ## ArrayList是如何进行扩容的
 ArrayList扩容的本质就是计算出新的扩容数组的size后实例化，并将原有数组内容复制到新数组中去，容量会扩展为原来的1.5倍
 
+## ArrayList线程不安全有什么解决办法
+1. new Vector();
+2. Collections.synchronizedList(new ArrayList());
+3. new CopyOnWriteArrayList();
+
 ## Vector的特点
 实现了List接口，底层数据结构和ArrayList类似，也是一个动态数组，但是它在调用add方法的时候使用了synchronized进行同步，开销较大，所以Vector是一个同步容器，并不是一个并发容器。
 
@@ -46,7 +51,7 @@ HashMap初始容量为16，当有数据要插入时，都会检查容量有没�
 ConcurrentHashMap默认将hash表分为16个桶，诸如get、put、remove等常用操作只锁住当前需要用到的桶。这样，原来只能一个线程进入，现在却能同时有16个写线程执行，并发性能的提升是显而易见的。
 
 ## HashSet的特点
-HashSet是一个不允许存储重复元素的集合，它几乎全部借助于HashMap来实现，只使用HashMap的key来实现各种特性，所以HashMap会出现的问题，HashSet也无法避免。
+HashSet是一个不允许存储重复元素的集合，它几乎全部借助于HashMap来实现，只使用HashMap的key来实现各种特性，所以HashMap会出现的问题，HashSet也无法避免。HashSet的add方法底层调用HashMap的add方法，key为add的值，value为一个object常量。
 
 ## LinkedHashMap的特点
 HashMap是一个无序的Map，LinkedHashMap是有序的，它是由一个双向链表来实现。
