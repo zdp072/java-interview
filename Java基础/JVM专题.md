@@ -94,7 +94,7 @@ public static void main(String[] args) {
 新生代的特点是每次垃圾回收都有大量的垃圾需要被回收，因此采用复制算法
 老年代每次垃圾回收只有少量的对象需要被回收，因此采用标记整理算法。
 
-## jvm有哪些垃圾回收器？
+## JVM有哪些垃圾回收器？
 1. CMS：使用标记整理清除算法
 2. G1: 基于标准整理算法，是JDK9以后的默认GC选项
 
@@ -139,17 +139,46 @@ java中操作对象使用引用，如果一个对象没有任何与之关联的�
 ## 如何打破双亲委派模型
 自己实现一个类加载器
 
+## 强引用、软引用、弱引用、虚引用分别是什么？
+### 强引用
+常见的普通对象引用，把一个对象赋给一个引用变量，这个引用变量就是一个强引用，这种对象是不会被垃圾回收的，因此强引用是造成Java内存泄漏的主要原因之一。
+
+### 软引用
+相对强引用弱化了一些的引用，使用java.lang.ref.SoftReference类实现。
+一般使用在高速缓存，内存够用就保留，内存不够就回收！
+
+### 弱引用
+使用java.lang.ref.WeakReference类来实现。
+对于弱引用的对象来说，只要垃圾回收机制一运行，不管jvm的内存空间是否足够，都会回收该对象占用的内存。
+
+WeakHashMap的key用的是WeakReference，在没有其他强引用的情况下，GC的时候是会被垃圾回收的。
+
+### 虚引用
+使用java.lang.ref.PhantomReference类来实现。
+如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收，它不能单独使用也不能通过它访问对象，虚引用必须和引用队列ReferenceQueue联合使用。
+
+## 如何查看JVM参数的初始值
+1. jps -l （查看进程id）
+2. jinfo -flag MetaspaceSize 进程id （查看MetaspaceSize默认值）
+3. jinfo -flag 进程id （查看所有默认值）
+4. java -XX:+PrintFlagsInitial
+5. java -XX:+PrintFlagsFinal -version (查看修改更新)
+
 ## JVM启动参数的意义
--Xmx3550m：设置JVM堆最大可用内存为3550M。
--Xms3550m：设置JVM堆初始内存为3550m。此值可以设置与-Xmx相同，以避免每次垃圾回收完成后JVM重新分配内存。
+-Xms3550m:设置JVM堆初始内存为3550m。此值可以设置与-Xmx相同，以避免每次垃圾回收完成后JVM重新分配内存。等价于-XX:InitialHeapSize
+-Xmx3550m:设置JVM堆最大可用内存为3550M。等价于-XX:MaxHeapSize
 
--Xss128k：设置每个线程的栈大小。（JDK5.0以后每个线程堆栈大小为1M）
--Xmn1024m：设置年轻代大小为1024m。等效于同时配置下面两个。
--XX:NewSize=1024m：设置年轻代初始值为1024M。
--XX:MaxNewSize=1024m：设置年轻代最大值为1024M。
+-Xss128k:设置单个线程栈大小。等价于-XX:ThreadStackSize
+-Xmn1024m:设置年轻代大小为1024m。等效于同时配置下面两个。
+-XX:NewSize=1024m:设置年轻代初始值为1024M。
+-XX:MaxNewSize=1024m:设置年轻代最大值为1024M。
+-XX:PermSize=256m:设置持久代初始值为256M。
+-XX:MaxPermSize=256m:设置持久代最大值为256M。
 
--XX:PermSize=256m：设置持久代初始值为256M。
--XX:MaxPermSize=256m：设置持久代最大值为256M。
+-XX:+PrintGCDetails:打印GC垃圾回收信息
+-XX:SurvivorRatio:Eden区与Survivor区的大小比值
+-XX:NewRatio:年轻代与年老代的比值
+-XX:MaxTenuringThreshold:设置垃圾最大年龄，默认为15
 
 ## 聊聊啥是CMS
 
