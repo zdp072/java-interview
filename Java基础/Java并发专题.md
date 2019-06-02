@@ -233,7 +233,7 @@ volatile变量的写操作对于读操作是可见的
 通常情况下保证公平性会降低吞吐量。
 
 #### LinkedBlockingQueue 由链表结构组成的有界阻塞队列
-同ArrayBlockingQueue，此队列按照先进先出的原则对元素进行排序，
+同ArrayBlockingQueue，此队列按照先进先出的原则对元素进行排序，默认大小为Integer.MAX_VALUE 
 
 #### PriorityBlockingQueue 支持优先级排序的无界阻塞队列
 是一个支持优先级的无界队列，默认情况下元素采取自然顺序升序排序。
@@ -403,16 +403,17 @@ https://blog.csdn.net/vking_wang/article/details/9982709
 2. 如果每个线程执行的代码不同，这时候需要用不同的Runnable对象
 
 ## 说说ContDownLatch的原理（倒计时门阀）
-让一个或多个线程持续等待，直到其他多线程执行的一组操作全部完成以后，这些等待的线程才会继续执行。
+让一些线程阻塞，直到另一些线程执行的一系列操作全部完成以后，这些等待的线程才会被唤醒。   
+countDownLatch主要有两个方法，当一个或多个线程调用await方法时，调用线程会被阻塞。其他线程调用countDown方法会将计数器减1（调用countDown方法的线程不会阻塞），当计数器的值变为0时，因调用await方法被阻塞的线程会被唤醒，继续执行。
 
-## 说说CyclicBarrier的原理（循环栅栏）
-可以把它理解成汽车站人满发车的场景。
-通过它可以实现让一组线程等待至某个状态之后再全部同时执行。
-可以用于多线程计算数据，最后合并计算结果的场景。
+## 说说CyclicBarrier的原理（循环路障）
+可以把它理解成汽车站人满发车的场景。可以用于多线程计算数据，最后合并计算结果的场景。
+让一组线程到达一个路障时被阻塞，直到最后一个线程到达路障时，路障才会放行，所有被拦截的线程继续干活，线程被路障阻塞通过调用await方法。
+
 
 ## 说下CountDownLatch和CyclicBarrier的区别
-- CyclicBarrier就是一个栅栏，等待所有线程到达后再执行相关的操作。barrier 在释放等待线程后可以重用。
-- CountDownLatch是计数器, 线程完成一个就记一个, 就像报数一样, 只不过是递减的，当计数器值到达0时，它表示所有的线程已经完成了任务
+- CyclicBarrier（做加法）是一个路障，等待所有线程到达后再执行相关的操作。
+- CountDownLatch（做减法）是一个计数器, 线程完成一个就记一个, 就像报数一样, 只不过是递减的，当计数器值到达0时，它表示所有的线程已经完成了任务。
 
 ## 说说Semaphore的原理（许可证管理器）
 Semaphore是一种基于计数的信号量，它可以设置一个阀值。多个线程竞争获取许可信号，做完自己的申请后归还，超过阀值后，线程申请许可将会被阻塞。
@@ -426,7 +427,12 @@ Exchanger可以看做一个双向的SynchronousQueue。
 ThreadLocal提供了线程本地变量，它可以保证访问到的变量属于当前线程，每个线程都保存一个变量副本。
 ThreadLocal相当于将线程隔离。
 
-## 线程池的几种方式
+## 使用线程池有哪些优势？
+1. 复用线程，降低线程创建和销毁造成的消耗。
+2. 不用等待线程创建就可立刻使用，提高响应速度。
+3. 使用线程池可对资源进行统一分配、调优、监控。
+
+## 创建线程池的几种方式
 在Executors类里面提供了一些静态工厂，生成一些常用的线程池。
 1. newSingleThreadExecutor
 只有一个线程在工作，如果这个唯一的线程因为异常结束，那么会有一个新的线程来替代它。
@@ -508,20 +514,25 @@ https://blog.csdn.net/Hadwin1991/article/details/73527835
 对于计算密集型的任务，在拥有N个处理器的系统上，当线程池的大小为N+1时，通常能实现最优的效率
 
 ## synchronized和ReentrantLock的区别
-#### 相同点
-1. 都是用来协调多线程对共享对象的访问
-2. 都是可重入锁，同一线程可以多次获得同一个锁
-3. 都保证了可见性和互斥性
+#### 原始构成
+synchronized是关键字，属于jvm层面的锁，底层使用monitorenter和monitorexit
+Lock是具体的类，是api层面的锁
 
-#### 不同点
-1. ReentrantLock显示的获得、释放锁，synchronized 隐式获得释放锁
-2. ReentrantLock是API级别的，synchronized是JVM级别的
-3. ReentrantLock可以实现公平锁
-4. Lock是一个接口，而synchronized是Java中的关键字，synchronized是内置的语言实现。
-5. synchronized在发生异常时，会自动释放线程占有的锁，因此不会导致死锁现象发生;而Lock在发生异常时，如果没有主动通过unLock()去释放锁，则很可能造成死锁现象，因此使用 Lock 时需要在 finally 块中释放锁。
-6. Lock可以让等待锁的线程响应中断，而synchronized却不行，使用synchronized时等待的线程会一直等待下去，不能够响应中断。
-7. 通过Lock可以知道有没有成功获取锁，而synchronized却无法办到。
-8. Lock可以提高多个线程进行读操作的效率，既就是实现读写锁等。
+#### 使用方法
+synchronized不需要用户手动释放锁，当synchronized代码执行完后系统会自动让线程释放对锁的占用
+ReentrantLock则需要用户手动释放锁，若没有主动释放锁，就有可能导致死锁。使用lock()和unlock()方法。
+
+#### 等待是否可中断
+synchronized不可中断，除非抛出异常或正常运行完成。
+ReentrantLock可中断，如设置超时方法tryLock或调用interrupt()方法
+
+#### 加锁是否公平
+synchronized为非公平锁
+ReentrantLock二者都可以，默认为非公平锁
+
+#### 锁绑定多个条件的condition
+synchronized只能随机唤醒一个线程或者唤醒全部线程。
+ReentrantLock用来实现分组唤醒需要唤醒的线程们，可以精准唤醒。
 
 ## ForkJoin框架的原理
 将大任务分割成若干个小任务，最终汇总每个小任务的结果后得到大任务结果的框架。
