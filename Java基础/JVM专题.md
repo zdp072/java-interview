@@ -43,7 +43,6 @@ for (int i = 1; i < 100; i++) {
 ```
 
 ### 当集合里面的对象属性被修改后，再调用remove方法不起作用
-
 ```
 public static void main(String[] args) { 
     Set<Person> set = new HashSet<Person>(); 
