@@ -167,17 +167,17 @@ WeakHashMap的key用的是WeakReference，在没有其他强引用的情况下�
 -Xms3550m:设置JVM堆初始内存为3550m。此值可以设置与-Xmx相同，以避免每次垃圾回收完成后JVM重新分配内存。等价于-XX:InitialHeapSize
 -Xmx3550m:设置JVM堆最大可用内存为3550M。等价于-XX:MaxHeapSize
 
--Xss128k:设置单个线程栈大小。等价于-XX:ThreadStackSize
--Xmn1024m:设置年轻代大小为1024m。等效于同时配置下面两个。
--XX:NewSize=1024m:设置年轻代初始值为1024M。
--XX:MaxNewSize=1024m:设置年轻代最大值为1024M。
--XX:PermSize=256m:设置持久代初始值为256M。
--XX:MaxPermSize=256m:设置持久代最大值为256M。
+-Xss128k :设置单个线程栈大小。等价于-XX:ThreadStackSize
+-Xmn1024m :设置年轻代大小为1024m。等效于同时配置下面两个。
+-XX:NewSize=1024m :设置年轻代初始值为1024M。
+-XX:MaxNewSize=1024m :设置年轻代最大值为1024M。
+-XX:PermSize=256m :设置持久代初始值为256M。
+-XX:MaxPermSize=256m :设置持久代最大值为256M。
 
--XX:+PrintGCDetails:打印GC垃圾回收信息
--XX:SurvivorRatio:Eden区与Survivor区的大小比值
--XX:NewRatio:年轻代与年老代的比值
--XX:MaxTenuringThreshold:设置垃圾最大年龄，默认为15
+-XX:+PrintGCDetails :打印GC垃圾回收信息
+-XX:SurvivorRatio :Eden区与Survivor区的大小比值
+-XX:NewRatio :年轻代与年老代的比值
+-XX:MaxTenuringThreshold :设置垃圾最大年龄，默认为15
 
 ## 聊聊啥是CMS
 
